@@ -8,11 +8,10 @@ import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
 
-import Figs as fg
+import Figs as fg      #A seperate figure plotting file is created to make the file less crowded
 
-prodat = pd.read_csv("G:\My Drive\Irem\PyHomeworks\scientificProject\data\Projectdata.csv")
-# year=('2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022')
-#yearsh = ('03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22')
+prodat = pd.read_csv("Projectdata.csv")
+year=('2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022')
 yearsh = ('12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22')
 countries = ('USA', 'Austria', 'Belgium', 'Denmark', 'France', 'Germany', 'Italy', 'Spain', 'Sweden', 'Finland', 'Norway',
 'Bulgaria', 'Poland', 'Ukraine', 'Lithuania', 'Romania', 'Slovakia', 'Slovenia', 'Croatia', 'Estonia', 'Latvia')
@@ -31,6 +30,8 @@ years_arr=np.empty((num_countries,num_years))
 countrynum=np.empty((num_countries,num_years))
 data_organized=np.empty((num_countries*num_years,num_features))
 target_organized=np.empty((num_countries*num_years,1))
+
+""" Data read from csv file has to be reorganized to be used in regression methods, thus first it is seperated by features and then clustered according to years"""
 
 for i in range(num_countries):
  GDPgrow[i]=np.asarray(prodat.values[i,:],dtype=np.float64)
@@ -57,21 +58,19 @@ for j in range(num_years):
    target_organized[i + j * num_countries] = 5
 
 """ Figures for yearly change in features """
-# fg.figplot(yearsh,GDPgrow,num_countries,'Year','GDP Growth(annual %)','Yearly Change of GDP Growth',countries,'plt')
-# fg.figplot(yearsh,GDPpC,num_countries,'Year','GDP per Capita (current K US$)','Yearly Change of GDP per Capita ',countries,'plt')
-# fg.figplot(yearsh,FB_HP,num_countries,'Year','fixed broadband – household penetration','Yearly Change of fixed broadband – household penetration',countries,'plt')
-# fg.figplot(yearsh,M_P,num_countries,'Year','Mobile - penetration total','Yearly Change of Mobile - penetration total',countries,'plt')
-# fg.figplot(yearsh,FM_Capex,num_countries,'Year','Fixed + Mobile Capex per Capita','Yearly Change of Fixed + Mobile Capex per Capita',countries,'plt')
-# fg.figplot(yearsh,HDI,num_countries,'Year','Human Development Index Trends','Yearly Change of Human Development Index Trends',countries,'plt')
-# """ Figures for cross properties of features """
-# fg.figplot(FM_Capex,HDI,num_countries,'Fixed + Mobile Capex per Capita','Human Development Index Trends',' ',countrynum,'sct')
-# fg.figplot(GDPpC,HDI,num_countries,'GDP per Capita (current K US$)','Human Development Index Trends',' ',countrynum,'sct')
-# fg.figplot(GDPgrow,HDI,num_countries,'GDP growth (annual %)','Human Development Index Trends',' ',countrynum,'sct')
-# fg.figplot(GDPpC,HDI,GDPgrow,'GDP per Capita (current K US$)','GDP growth (annual %)',' ',countrynum,'sct')
-# fg.figplot(FB_HP,HDI,num_countries,'fixed broadband – household penetration','Human Development Index Trends',' ',countrynum,'sct')
-# fg.figplot(FB_HP,M_P,num_countries,'fixed broadband – household penetration','Mobile - penetration total',' ',countrynum,'sct')
-#
-
+fg.figplot(yearsh,GDPgrow,num_countries,'Year','GDP Growth(annual %)','Yearly Change of GDP Growth',countries,'plt')
+fg.figplot(yearsh,GDPpC,num_countries,'Year','GDP per Capita (current K US$)','Yearly Change of GDP per Capita ',countries,'plt')
+fg.figplot(yearsh,FB_HP,num_countries,'Year','fixed broadband – household penetration','Yearly Change of fixed broadband – household penetration',countries,'plt')
+fg.figplot(yearsh,M_P,num_countries,'Year','Mobile - penetration total','Yearly Change of Mobile - penetration total',countries,'plt')
+fg.figplot(yearsh,FM_Capex,num_countries,'Year','Fixed + Mobile Capex per Capita','Yearly Change of Fixed + Mobile Capex per Capita',countries,'plt')
+fg.figplot(yearsh,HDI,num_countries,'Year','Human Development Index Trends','Yearly Change of Human Development Index Trends',countries,'plt')
+""" Figures for cross properties of features """
+fg.figplot(FM_Capex,HDI,num_countries,'Fixed + Mobile Capex per Capita','Human Development Index Trends',' ',countrynum,'sct')
+fg.figplot(GDPpC,HDI,num_countries,'GDP per Capita (current K US$)','Human Development Index Trends',' ',countrynum,'sct')
+fg.figplot(GDPgrow,HDI,num_countries,'GDP growth (annual %)','Human Development Index Trends',' ',countrynum,'sct')
+fg.figplot(GDPpC,HDI,GDPgrow,'GDP per Capita (current K US$)','GDP growth (annual %)',' ',countrynum,'sct')
+fg.figplot(FB_HP,HDI,num_countries,'fixed broadband – household penetration','Human Development Index Trends',' ',countrynum,'sct')
+fg.figplot(FB_HP,M_P,num_countries,'fixed broadband – household penetration','Mobile - penetration total',' ',countrynum,'sct')
 
 Data_F=pd.DataFrame(data=data_organized, columns=feature_names)
 print(Data_F.head())
@@ -79,9 +78,11 @@ print(len(Data_F))
 X=data_organized[0:num_years*num_countries,0:num_features]
 y=data_organized[0:num_years*num_countries:,num_features-1]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+### all feauture plotting
 pd.plotting.scatter_matrix(Data_F,c=target_organized, grid=True, figsize=[10,10], s=420, marker='.')
 plt.show()
 
+# # # OLS section
 reg = linear_model.LinearRegression()  # linear regression fitting
 reg.fit(X_train, y_train)
 preddata=np.empty((2,5))
@@ -91,7 +92,6 @@ targdata=[y[42],y[63]]
 reg_pred = reg.predict(preddata)
 print("reg_pred:{}".format(reg_pred))
 print("target:{}".format(targdata))
-
 reg_score=reg.score(X_test, y_test)
 # cv_results = cross_val_score(reg, X, y, cv=10)
 # print("cv_results:{}".format(cv_results))
@@ -99,7 +99,7 @@ print("Regression Score:{}".format(reg_score))
 print("Regression Coefficients:{}".format(reg.coef_))
 rmse_reg= np.sqrt(mean_squared_error(reg_pred, targdata))
 print("Regression Root Mean Squared Error: {}".format(rmse_reg))
-#
+# # #Ridge Regression Section
 ridge = linear_model.Ridge(alpha=0.1) #ridge regression fitting with penalty 0.1
 ridge.fit(X_train, y_train)
 ridge_pred = ridge.predict(X_test)
@@ -108,9 +108,8 @@ print("Ridge Score:{}".format(ridge_score))
 print("Ridge Coefficients:{}".format(ridge.coef_))
 rmse_ridge = np.sqrt(mean_squared_error(ridge_pred, y_test))
 print("Ridge Root Mean Squared Error: {}".format(rmse_ridge))
-# #
 
-# # # Although regression depends on 3 variables, plots are created for single dimension for Fixed broadband-household penetration vs Human Dev. Ind.
+# # # Although regression depends on 5 variables, plots are created for single dimension for Fixed broadband-household penetration vs Human Dev. Ind.
 plt.scatter(FB_HP, HDI, c=countrynum,marker='o')
 XX=data_organized[:,2].reshape(-1,1)
 yy=data_organized[:,4]
@@ -124,7 +123,7 @@ plt.legend(loc='lower left', fontsize='xx-small')
 plt.xlabel('fixed broadband – household penetration')
 plt.ylabel('Human Development Index Trends')
 plt.show()
-
+# # # Although regression depends on 5 variables, plots are created for single dimension for Fixed + Mobile Capex per Capita vs Fixed broadband-household penetration
 plt.scatter(FM_Capex, FB_HP, c=countrynum,marker='o')
 XX=data_organized[:,5].reshape(-1,1)
 yy=data_organized[:,2]
@@ -146,7 +145,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 # regscore=regr.score(X_test, y_test)
 # print("regscore: {}".format(regscore))
 
-
+# Kernel Ridge SVR section
 from sklearn.kernel_ridge import KernelRidge
 print("test in : {}".format(targdata))
 krr=KernelRidge(alpha=1, kernel='poly',gamma=1,degree=2)
