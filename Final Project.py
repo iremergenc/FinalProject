@@ -138,17 +138,10 @@ plt.xlabel('Fixed + Mobile Capex per Capita')
 plt.ylabel('Fixed Broadband – Household Penetration')
 plt.show()
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-# regr = MLPRegressor(random_state=42, max_iter=15000,hidden_layer_sizes=30,activation='tanh').fit(X_train,y_train)
-# print("test in : {}".format(targdata))
-# print("output: {}".format(regr.predict(preddata)))
-# regscore=regr.score(X_test, y_test)
-# print("regscore: {}".format(regscore))
-
 # Kernel Ridge SVR section
 from sklearn.kernel_ridge import KernelRidge
 print("test in : {}".format(targdata))
-krr=KernelRidge(alpha=1, kernel='poly',gamma=1,degree=2)
+krr=KernelRidge(alpha=1, kernel='poly',gamma=0.8,degree=3)
 krr.fit(X_train,y_train)
 print("output: {}".format(krr.predict(preddata)))
 krr_score=krr.score(X_test, y_test)
